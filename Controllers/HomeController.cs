@@ -1,31 +1,86 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using MvcRazorViews.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using MvcLabManager.Models;
 
-namespace MvcRazorViews.Controllers;
+namespace MvcLabManager.Controllers;
 
-public class HomeController : Controller
+public class LabController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly LabManagerContext _context;
 
-    public HomeController(ILogger<HomeController> logger)
+    public LabController (LabManagerContext context)
     {
-        _logger = logger;
+        _context = context;
     }
 
     public IActionResult Index()
     {
-        return View();
+        return View(_context.Labs);
     }
 
-    public IActionResult Privacy()
+    public IActionResult Show(int id)
+    {
+        Lab lab = _context.Labs.Find(id);
+
+        if(lab == null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return View(lab);
+        }
+    }
+
+    public IActionResult Create()
     {
         return View();
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Creating([FromForm] Lab labViewModel) 
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        Lab lab = new Lab(labViewModel.Id, labViewModel.Number, labViewModel.Name, labViewModel.Sector);
+        _context.Labs.Add(lab);
+        _context.SaveChanges();
+        return View("Index");
+    }
+
+    public IActionResult Update(int id) 
+    {
+        Lab lab = _context.Labs.Find(id);
+
+        if(!ModelState.IsValid)
+        {
+            return Content("Computador não existe");
+        }
+        else
+        {
+            return View(lab);
+        }
+    }
+
+    public IActionResult Updating([FromForm] Lab labViewModel)
+    {
+        Lab lab = _context.Labs.Find(labViewModel.Id);
+
+        if(!ModelState.IsValid)
+        {
+            return Content("Lab com Id não encontrado");
+        }
+        else
+        {
+            lab.Number = labViewModel.Number;
+            lab.Name = labViewModel.Name;
+            lab.Sector = labViewModel.Sector;
+            _context.Labs.Update(lab);
+            _context.SaveChanges();
+            return View("Index");
+        }
+    }
+
+    public IActionResult Delete(int id)
+    {
+        _context.Labs.Remove(_context.Labs.Find(id));
+        _context.SaveChanges();
+        return View();
     }
 }

@@ -1,4 +1,4 @@
-namespace MvcRazorViews.Models;
+namespace MvcLabManager.Models;
 
 public class ErrorViewModel
 {

@@ -1,7 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using MvcLabManager.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<LabManagerContext>(options => options.UseMySQL("server=localhost;database=estudante;user=estudante;password=estudante"));
 
 var app = builder.Build();
 
@@ -22,7 +26,8 @@ app.MapControllerRoute(
 
 app.Run();
 
-//cd Desktop/
-//mkdir sp3048144
-//cd sp3048144
-//dotnet new mvc --no-https -o NomeQualquer
+//Anotações das aulas:
+//*cd Desktop/
+//*mkdir sp3048144
+//*cd sp3048144
+//*dotnet new mvc --no-https -o NomeQualquer
